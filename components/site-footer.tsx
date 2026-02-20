@@ -11,9 +11,9 @@ const navLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-white/90 backdrop-blur-sm">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+    <footer className="border-t border-slate-200 bg-white/92 backdrop-blur-sm">
+      <div className="mx-auto max-w-6xl px-4 py-9 sm:px-6 sm:py-10 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3 md:text-left">
           <div>
             <h2 className="font-heading text-lg font-bold text-slate-900">{BUSINESS.name}</h2>
             <p className="mt-2 text-sm text-slate-600">{BUSINESS.tagline}</p>
@@ -25,7 +25,7 @@ export function SiteFooter() {
             <ul className="mt-3 space-y-2">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-orange-600">
+                  <Link href={link.href} className="inline-block py-1 text-sm text-slate-600 transition-colors hover:text-orange-600">
                     {link.label}
                   </Link>
                 </li>
@@ -48,7 +48,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="mt-8 border-t border-slate-100 pt-4 text-xs text-slate-500">
+        <p className="mt-8 border-t border-slate-100 pt-4 text-center text-xs text-slate-500 md:text-left">
           © {new Date().getFullYear()} {BUSINESS.name}. Serving Henderson County and Western North Carolina.
         </p>
       </div>

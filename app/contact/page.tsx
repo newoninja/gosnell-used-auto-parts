@@ -16,19 +16,19 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen">
       <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-forest-700">Contact</p>
-          <h1 className="mt-3 font-heading text-4xl font-black text-slate-900 sm:text-5xl">Get in touch</h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-600">
+          <h1 className="mt-3 font-heading text-3xl font-black text-slate-900 sm:text-5xl">Get in touch</h1>
+          <p className="mt-4 max-w-2xl text-base text-slate-600 sm:text-lg">
             Call us for the fastest response, or send your request below.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="space-y-4">
-            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
               <p className="flex items-start gap-2 text-sm text-slate-700">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" aria-hidden="true" />
                 {BUSINESS.address.full}
@@ -63,7 +63,7 @@ export default function ContactPage() {
             <iframe
               title="Gosnell Used Auto Parts map"
               src="https://maps.google.com/maps?q=110+Tabor+Road+Extension,+Flat+Rock,+NC+28731&t=&z=15&ie=UTF8&iwloc=&output=embed"
-              className="h-64 w-full rounded-lg border border-slate-200"
+              className="h-56 w-full rounded-lg border border-slate-200 sm:h-64"
               loading="lazy"
             />
           </div>

@@ -63,7 +63,7 @@ body {
 
 .site-bg {
   background-image:
-    linear-gradient(rgba(248, 250, 252, 0.82), rgba(248, 250, 252, 0.84)),
+    linear-gradient(rgba(248, 250, 252, 0.78), rgba(248, 250, 252, 0.82)),
     url('/hendersonville11.jpg');
   background-size: cover;
   background-position: center top;
@@ -73,22 +73,35 @@ body {
 
 .site-bg main > section.bg-white,
 .site-bg main > section[class*=" bg-white"] {
-  background-color: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
 }
 
 .site-bg main > section.bg-slate-50,
 .site-bg main > section[class*=" bg-slate-50"] {
-  background-color: rgba(248, 250, 252, 0.78) !important;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background-color: rgba(248, 250, 252, 0.84) !important;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
 }
 
 @media (max-width: 768px) {
   .site-bg {
+    background-image:
+      linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.93)),
+      url('/hendersonville11.jpg');
     background-attachment: scroll;
-    background-position: center;
+    background-position: 58% top;
+  }
+
+  .site-bg main > section.bg-white,
+  .site-bg main > section[class*=" bg-white"] {
+    background-color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  .site-bg main > section.bg-slate-50,
+  .site-bg main > section[class*=" bg-slate-50"] {
+    background-color: rgba(248, 250, 252, 0.9) !important;
   }
 }
 

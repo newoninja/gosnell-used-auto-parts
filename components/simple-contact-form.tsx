@@ -47,7 +47,7 @@ export function SimpleContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium text-slate-700">
           Name *
@@ -55,7 +55,7 @@ export function SimpleContactForm() {
             type="text"
             name="name"
             required
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:text-sm"
           />
         </label>
 
@@ -64,7 +64,7 @@ export function SimpleContactForm() {
           <input
             type="tel"
             name="phone"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:text-sm"
           />
         </label>
       </div>
@@ -74,7 +74,7 @@ export function SimpleContactForm() {
         <input
           type="email"
           name="email"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:text-sm"
         />
       </label>
 
@@ -83,7 +83,7 @@ export function SimpleContactForm() {
         <input
           type="text"
           name="vehicle"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:text-sm"
         />
       </label>
 
@@ -93,7 +93,7 @@ export function SimpleContactForm() {
           type="text"
           name="part_needed"
           required
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:text-sm"
         />
       </label>
 
@@ -102,14 +102,14 @@ export function SimpleContactForm() {
         <textarea
           name="message"
           rows={4}
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 sm:text-sm"
         />
       </label>
 
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="inline-flex items-center rounded-md bg-orange-500 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-70"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-orange-500 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
       >
         {status === 'submitting' ? 'Sending...' : 'Send Request'}
       </button>
