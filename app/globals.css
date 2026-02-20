@@ -63,7 +63,7 @@ body {
 
 .site-bg {
   background-image:
-    linear-gradient(rgba(248, 250, 252, 0.62), rgba(248, 250, 252, 0.68)),
+    linear-gradient(rgba(248, 250, 252, 0.82), rgba(248, 250, 252, 0.84)),
     url('/hendersonville11.jpg');
   background-size: cover;
   background-position: center top;
@@ -71,28 +71,18 @@ body {
   background-attachment: fixed;
 }
 
-.site-bg .bg-white {
-  background-color: rgba(255, 255, 255, 0.66) !important;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+.site-bg main > section.bg-white,
+.site-bg main > section[class*=" bg-white"] {
+  background-color: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
-.site-bg [class*="bg-white/"] {
-  background-color: rgba(255, 255, 255, 0.66) !important;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-
-.site-bg .bg-slate-50 {
-  background-color: rgba(248, 250, 252, 0.58) !important;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-
-.site-bg .bg-orange-50 {
-  background-color: rgba(255, 247, 237, 0.72) !important;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+.site-bg main > section.bg-slate-50,
+.site-bg main > section[class*=" bg-slate-50"] {
+  background-color: rgba(248, 250, 252, 0.78) !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 @media (max-width: 768px) {
