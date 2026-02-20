@@ -42,7 +42,7 @@
   --color-cream: #f8fafc;
 
   /* Typography */
-  --font-family-heading: 'Space Grotesk', Impact, 'Arial Black', system-ui, sans-serif;
+  --font-family-heading: 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-body: 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
@@ -62,47 +62,10 @@ body {
 }
 
 .site-bg {
-  background-image:
-    linear-gradient(rgba(248, 250, 252, 0.78), rgba(248, 250, 252, 0.82)),
-    url('/hendersonville11.jpg');
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
-
-.site-bg main > section.bg-white,
-.site-bg main > section[class*=" bg-white"] {
-  background-color: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-}
-
-.site-bg main > section.bg-slate-50,
-.site-bg main > section[class*=" bg-slate-50"] {
-  background-color: rgba(248, 250, 252, 0.84) !important;
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-}
-
-@media (max-width: 768px) {
-  .site-bg {
-    background-image:
-      linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.93)),
-      url('/hendersonville11.jpg');
-    background-attachment: scroll;
-    background-position: 58% top;
-  }
-
-  .site-bg main > section.bg-white,
-  .site-bg main > section[class*=" bg-white"] {
-    background-color: rgba(255, 255, 255, 0.92) !important;
-  }
-
-  .site-bg main > section.bg-slate-50,
-  .site-bg main > section[class*=" bg-slate-50"] {
-    background-color: rgba(248, 250, 252, 0.9) !important;
-  }
+  background:
+    radial-gradient(1200px 420px at 100% -10%, rgba(249, 115, 22, 0.08), transparent 60%),
+    radial-gradient(900px 320px at 0% 0%, rgba(22, 101, 52, 0.1), transparent 60%),
+    #f3f5f7;
 }
 
 h1, h2, h3, h4, h5, h6 {

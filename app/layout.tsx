@@ -2,9 +2,10 @@ import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { MobileCallButton } from '@/components/mobile-call-button'
 import './globals.css'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gosnellusedautoparts.com'
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gosnellautoparts.com'
 const socialImage = '/og-image.svg'
 
 export const metadata: Metadata = {
@@ -95,6 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="site-bg text-slate-900 antialiased">
         <SiteHeader />
         {children}
+        <MobileCallButton />
         <SiteFooter />
         <Analytics />
       </body>
