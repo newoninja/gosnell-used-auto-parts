@@ -61,6 +61,22 @@ body {
   line-height: 1.6;
 }
 
+.site-bg {
+  background-image:
+    linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.92)),
+    url('/hendersonville11.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+@media (max-width: 768px) {
+  .site-bg {
+    background-attachment: scroll;
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-heading);
   line-height: 1.1;
