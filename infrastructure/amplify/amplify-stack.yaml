@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Amplify Hosting stack for Gosnell Used Auto Parts
+
+Parameters:
+  AppName:
+    Type: String
+    Default: gosnell-used-auto-parts
+    Description: Name of the Amplify app
+  RepositoryUrl:
+    Type: String
+    Description: GitHub repository URL (for example https://github.com/ORG/REPO)
+  BranchName:
+    Type: String
+    Default: main
+    Description: Git branch Amplify should build and host
+  GitHubAccessToken:
+    Type: String
+    NoEcho: true
+    Description: GitHub personal access token with repo access
+
+Resources:
+  AmplifyApp:
+    Type: AWS::Amplify::App
+    Properties:
+      Name: !Ref AppName
+      Platform: WEB_COMPUTE
+      Repository: !Ref RepositoryUrl
+      AccessToken: !Ref GitHubAccessToken
+      BuildSpec: |
+        version: 1
+        frontend:
+          phases:
+            preBuild:
+              commands:
+                - npm ci
+            build:
+              commands:
+                - npm run build
+          artifacts:
+            baseDirectory: .next
+            files:
+              - '**/*'
+          cache:
+            paths:
+              - node_modules/**/*
+
+  MainBranch:
+    Type: AWS::Amplify::Branch
+    Properties:
+      AppId: !GetAtt AmplifyApp.AppId
+      BranchName: !Ref BranchName
+      Stage: PRODUCTION
+      EnableAutoBuild: true
+
+Outputs:
+  AmplifyAppId:
+    Description: Amplify app id
+    Value: !GetAtt AmplifyApp.AppId
+
+  AmplifyDefaultDomain:
+    Description: Amplify default domain
+    Value: !GetAtt AmplifyApp.DefaultDomain
+
+  AmplifyConsoleUrl:
+    Description: Amplify console URL for this app
+    Value: !Sub https://${AWS::Region}.console.aws.amazon.com/amplify/home?region=${AWS::Region}#/${AmplifyApp.AppId}
+
+  ProductionBranchUrl:
+    Description: Hosted URL for the configured branch
+    Value: !Sub https://${BranchName}.${AmplifyApp.DefaultDomain}
