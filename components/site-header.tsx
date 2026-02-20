@@ -11,7 +11,7 @@ const navLinks = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/70 backdrop-blur-sm">
       <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link href="/" className="leading-tight">

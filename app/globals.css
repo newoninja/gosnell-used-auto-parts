@@ -63,17 +63,42 @@ body {
 
 .site-bg {
   background-image:
-    linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.92)),
+    linear-gradient(rgba(248, 250, 252, 0.62), rgba(248, 250, 252, 0.68)),
     url('/hendersonville11.jpg');
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
+
+.site-bg .bg-white {
+  background-color: rgba(255, 255, 255, 0.66) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.site-bg [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.66) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.site-bg .bg-slate-50 {
+  background-color: rgba(248, 250, 252, 0.58) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.site-bg .bg-orange-50 {
+  background-color: rgba(255, 247, 237, 0.72) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 @media (max-width: 768px) {
   .site-bg {
     background-attachment: scroll;
+    background-position: center;
   }
 }
 
