@@ -56,7 +56,7 @@ const startCards = [
     title: 'Request a Part',
     copy: 'Tell us what you need and we will follow up within one business day.',
     icon: MessageSquare,
-    href: '/#request-part',
+    href: '/contact',
     external: false,
     cta: 'Submit Request',
   },
@@ -180,7 +180,7 @@ export default function HomePage() {
               Call {BUSINESS.phones.main}
             </a>
             <Link
-              href="/#request-part"
+              href="/contact"
               className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-slate-200/40 bg-white/10 px-6 py-3 text-base font-black text-white backdrop-blur-sm transition-colors hover:bg-white/20 sm:w-auto"
             >
               Request a Part

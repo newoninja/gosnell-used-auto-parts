@@ -6,11 +6,11 @@ import { useState } from 'react'
 import { BUSINESS } from '@/lib/utils'
 
 const navLinks = [
-  { href: '/#home', label: 'Home' },
-  { href: '/#about', label: 'About' },
-  { href: '/#inventory', label: 'Inventory' },
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/inventory', label: 'Inventory' },
   { href: '/services', label: 'Services' },
-  { href: '/#request-part', label: 'Contact' },
+  { href: '/contact', label: 'Contact' },
 ]
 
 export function SiteHeader() {
@@ -21,7 +21,7 @@ export function SiteHeader() {
       <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/92 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3">
-            <Link href="/#home" className="leading-tight">
+            <Link href="/" className="leading-tight">
               <span className="block font-heading text-sm font-black tracking-tight text-slate-950 sm:text-base">
                 GOSNELL USED AUTO PARTS
               </span>

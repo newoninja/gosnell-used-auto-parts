@@ -2,11 +2,11 @@ import Link from 'next/link'
 import { BUSINESS } from '@/lib/utils'
 
 const navLinks = [
-  { href: '/#home', label: 'Home' },
-  { href: '/#inventory', label: 'Inventory' },
+  { href: '/', label: 'Home' },
+  { href: '/inventory', label: 'Inventory' },
   { href: '/services', label: 'Services' },
-  { href: '/#about', label: 'About' },
-  { href: '/#request-part', label: 'Request a Part' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Request a Part' },
 ]
 
 export function SiteFooter() {
