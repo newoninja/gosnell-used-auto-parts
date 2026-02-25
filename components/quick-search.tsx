@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { Search, ExternalLink, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buildInventorySearchUrl } from '@/lib/inventory-search'
-import { BUSINESS } from '@/lib/utils'
 
 const currentYear = new Date().getFullYear()
 const years = Array.from({ length: 35 }, (_, i) => String(currentYear - i))
@@ -71,6 +70,13 @@ export function QuickSearch({ overlap = true }: { overlap?: boolean }) {
   const searchUrl = buildInventorySearchUrl({ year, make, model, partType })
   const hasCriteria = Boolean(year || make || model.trim() || partType)
 
+  // Build internal inventory search URL
+  const internalParams = new URLSearchParams()
+  if (make) internalParams.set('make', make)
+  if (model.trim()) internalParams.set('model', model.trim())
+  if (year) internalParams.set('year', year)
+  const internalSearchUrl = `/inventory${internalParams.toString() ? `?${internalParams.toString()}` : ''}`
+
   return (
     <section
       id="search"
@@ -98,7 +104,7 @@ export function QuickSearch({ overlap = true }: { overlap?: boolean }) {
             </div>
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <span className="inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse" aria-hidden="true" />
-              Live inventory on Car-Part.com
+              Live inventory
             </div>
           </div>
 
@@ -146,11 +152,27 @@ export function QuickSearch({ overlap = true }: { overlap?: boolean }) {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
-              Our full inventory is searchable at{' '}
-              <strong className="text-slate-600">Car-Part.com</strong>. Select your vehicle above
-              to jump directly to your results, or browse everything we have.
+              Browse our in-house inventory or search extended listings on{' '}
+              <strong className="text-slate-600">Car-Part.com</strong>.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Button
+                asChild
+                size="lg"
+                className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 text-white font-bold"
+              >
+                <a
+                  href={internalSearchUrl}
+                  aria-label={
+                    hasCriteria
+                      ? 'Search our inventory with selected filters'
+                      : 'Browse all parts in our inventory'
+                  }
+                >
+                  <Search className="h-4 w-4" aria-hidden="true" />
+                  Search Our Inventory
+                </a>
+              </Button>
               <Button
                 asChild
                 variant="forest"
@@ -158,32 +180,13 @@ export function QuickSearch({ overlap = true }: { overlap?: boolean }) {
                 className="w-full sm:w-auto"
               >
                 <a
-                  href={BUSINESS.inventory}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Browse all inventory on Car-Part.com"
-                >
-                  <Search className="h-4 w-4" aria-hidden="true" />
-                  Browse All Parts
-                </a>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 text-white font-bold"
-              >
-                <a
                   href={searchUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={
-                    hasCriteria
-                      ? 'Search selected vehicle and part on Car-Part.com'
-                      : 'Search specific part on Car-Part.com'
-                  }
+                  aria-label="Search Car-Part.com"
                 >
                   <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                  Search Now
+                  Search Car-Part.com
                 </a>
               </Button>
             </div>

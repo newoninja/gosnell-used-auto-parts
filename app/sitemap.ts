@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next'
+import { getAllPartIds } from '@/lib/firebase/parts-server'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gosnellautoparts.com'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${siteUrl}/`,
       lastModified: new Date(),
@@ -25,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${siteUrl}/inventory`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'daily',
       priority: 0.9,
     },
     {
@@ -41,4 +42,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ]
+
+  // Add dynamic inventory part pages
+  let partPages: MetadataRoute.Sitemap = []
+  try {
+    const partIds = await getAllPartIds()
+    partPages = partIds.map((id) => ({
+      url: `${siteUrl}/inventory/${id}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    }))
+  } catch {
+    // Firestore may not be available during build — skip dynamic pages
+  }
+
+  return [...staticPages, ...partPages]
 }

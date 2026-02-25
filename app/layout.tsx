@@ -1,8 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import { Analytics } from '@vercel/analytics/react'
-import { SiteHeader } from '@/components/site-header'
-import { SiteFooter } from '@/components/site-footer'
-import { MobileCallButton } from '@/components/mobile-call-button'
 import './globals.css'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gosnellautoparts.com'
@@ -94,11 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className="site-bg text-slate-900 antialiased">
-        <SiteHeader />
         {children}
-        <MobileCallButton />
-        <SiteFooter />
-        <Analytics />
       </body>
     </html>
   )

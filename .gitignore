@@ -27,5 +27,9 @@ pnpm-debug.log*
 .vscode/
 .idea/
 
+# firebase
+.firebase/
+firebase-debug.log
+
 # misc
 .vercel/

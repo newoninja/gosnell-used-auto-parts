@@ -38,11 +38,11 @@ const trustBadges = [
 const startCards = [
   {
     title: 'Search Inventory',
-    copy: 'Thousands of late-model parts updated daily on Car-Part.com.',
+    copy: 'Browse our in-house parts inventory, updated as we pull new stock.',
     icon: Search,
-    href: BUSINESS.inventory,
-    external: true,
-    cta: 'Open Live Inventory',
+    href: '/inventory',
+    external: false,
+    cta: 'Browse Inventory',
   },
   {
     title: 'Services',
@@ -297,19 +297,17 @@ export default function HomePage() {
             <p className="text-sm font-semibold uppercase tracking-wide text-forest-700">Live Inventory</p>
             <h2 className="mt-3 font-heading text-3xl font-black text-slate-950 sm:text-4xl">Search Our Parts Inventory Online</h2>
             <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-              Search by year, make, model, and part type through our live Car-Part inventory.
+              Search by year, make, model, and part type through our inventory.
               If you do not see what you need, call us and we can check additional yard stock.
             </p>
             <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
-              <a
-                href={BUSINESS.inventory}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/inventory"
                 className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-5 py-3 text-sm font-black text-white transition-colors hover:bg-orange-400 sm:w-auto"
               >
                 <Search className="h-4 w-4" aria-hidden="true" />
-                Open Live Inventory
-              </a>
+                Browse Inventory
+              </Link>
               <a
                 href={BUSINESS.phones.mainHref}
                 className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-900 transition-colors hover:bg-slate-100 sm:w-auto"

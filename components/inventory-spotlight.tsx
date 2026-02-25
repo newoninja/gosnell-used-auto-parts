@@ -2,15 +2,26 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { ExternalLink, Search, Database, RefreshCw, CheckCircle } from 'lucide-react'
 import { BUSINESS } from '@/lib/utils'
+import Link from 'next/link'
 
 const features = [
   { icon: Search, label: 'Search by Year, Make & Model' },
-  { icon: Database, label: 'Thousands of Parts Listed' },
-  { icon: RefreshCw, label: 'Updated Daily' },
+  { icon: Database, label: 'Browse Our Yard Stock' },
+  { icon: RefreshCw, label: 'Updated as Parts Are Pulled' },
   { icon: CheckCircle, label: 'VIN Lookup Available' },
 ]
 
-const mockRows = [
+export interface SpotlightPart {
+  part: string
+  year: string
+  make: string
+  model: string
+  miles: string
+  price: string
+  id?: string
+}
+
+const fallbackRows: SpotlightPart[] = [
   { part: 'Engine Assembly', year: '2018', make: 'Ford', model: 'F-150', miles: '87K', price: '$1,850' },
   { part: 'Transmission Auto', year: '2016', make: 'Chevrolet', model: 'Silverado', miles: '94K', price: '$945' },
   { part: 'Door Front Right', year: '2019', make: 'Toyota', model: 'Tacoma', miles: '—', price: '$285' },
@@ -18,8 +29,9 @@ const mockRows = [
   { part: 'Headlight Assembly', year: '2020', make: 'Dodge', model: 'Ram 1500', miles: '—', price: '$210' },
 ]
 
-export function InventorySpotlight() {
+export function InventorySpotlight({ parts }: { parts?: SpotlightPart[] }) {
   const prefersReduced = useReducedMotion()
+  const mockRows = parts && parts.length > 0 ? parts : fallbackRows
 
   return (
     <motion.section
@@ -85,56 +97,35 @@ export function InventorySpotlight() {
             </ul>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <motion.a
+              <Link href="/inventory">
+                <motion.span
+                  whileHover={
+                    prefersReduced
+                      ? {}
+                      : {
+                          scale: 1.04,
+                          y: -2,
+                          boxShadow: '0 20px 40px -10px rgba(249,115,22,0.25)',
+                        }
+                  }
+                  whileTap={prefersReduced ? {} : { scale: 0.94 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="relative overflow-hidden inline-flex items-center gap-2 rounded-2xl bg-orange-500 hover:bg-orange-400 px-8 py-4 text-white font-black text-lg shadow-md transition-colors group"
+                >
+                  <Search className="h-5 w-5" aria-hidden="true" />
+                  Browse Inventory
+                </motion.span>
+              </Link>
+              <a
                 href={BUSINESS.inventory}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={
-                  prefersReduced
-                    ? {}
-                    : {
-                        scale: 1.04,
-                        y: -2,
-                        boxShadow: '0 20px 40px -10px rgba(249,115,22,0.25)',
-                      }
-                }
-                whileTap={prefersReduced ? {} : { scale: 0.94 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                className="relative overflow-hidden inline-flex items-center gap-2 rounded-2xl bg-orange-500 hover:bg-orange-400 px-8 py-4 text-white font-black text-lg shadow-md transition-colors group"
-                aria-label="Open inventory on Car-Part.com"
-              >
-                {/* Shimmer */}
-                {!prefersReduced && (
-                  <motion.span
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent"
-                    initial={{ x: '-110%' }}
-                    whileHover={{ x: '110%' }}
-                    transition={{ duration: 0.55, ease: 'easeInOut' }}
-                    aria-hidden="true"
-                  />
-                )}
-                <ExternalLink className="h-5 w-5" aria-hidden="true" />
-                Open Inventory Search
-              </motion.a>
-              <a
-                href="/contact"
                 className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 hover:border-forest-300 hover:bg-forest-50 px-6 py-4 text-slate-700 font-bold transition-all duration-300"
               >
-                Can't Find It? Ask Us
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                Search Car-Part.com
               </a>
             </div>
-
-            <p className="mt-5 text-xs text-slate-400">
-              Inventory URL:{' '}
-              <a
-                href={BUSINESS.inventory}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-orange-500 hover:text-orange-600 transition-colors underline underline-offset-2"
-              >
-                trade3466.car-part.com
-              </a>
-            </p>
           </motion.div>
 
           {/* Right: Browser mockup */}
@@ -179,14 +170,12 @@ export function InventorySpotlight() {
                 ))}
 
                 <div className="pt-2 text-center">
-                  <a
-                    href={BUSINESS.inventory}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href="/inventory"
                     className="text-xs text-orange-500 hover:text-orange-600 transition-colors"
                   >
-                    View all results at Car-Part.com →
-                  </a>
+                    View all inventory →
+                  </Link>
                 </div>
               </div>
             </div>
@@ -215,7 +204,7 @@ function MockRow({
   index,
   prefersReduced,
 }: {
-  row: (typeof mockRows)[number]
+  row: SpotlightPart
   index: number
   prefersReduced: boolean
 }) {
