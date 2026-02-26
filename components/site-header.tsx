@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Menu, Phone, X } from 'lucide-react'
+import { Menu, Phone, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { BUSINESS } from '@/lib/utils'
 
@@ -40,7 +40,14 @@ export function SiteHeader() {
               ))}
             </nav>
 
-            <div className="hidden items-center gap-3 md:flex">
+            <div className="hidden items-center gap-2 md:flex">
+              <Link
+                href="/inventory"
+                aria-label="Search inventory"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+              >
+                <Search className="h-4 w-4" aria-hidden="true" />
+              </Link>
               <a
                 href={BUSINESS.phones.mainHref}
                 className="text-sm font-bold tracking-wide text-slate-900 transition-colors hover:text-forest-700"
