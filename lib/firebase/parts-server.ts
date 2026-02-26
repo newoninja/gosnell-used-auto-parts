@@ -25,7 +25,7 @@ export async function getAvailableParts(options: PublicPartsQuery = {}): Promise
 }> {
   const { category, make, model, year, pageSize = 24, offset = 0 } = options
 
-  let q: FirebaseFirestore.Query = adminDb.collection(PARTS_COLLECTION).where('stockStatus', '==', 'Available')
+  let q: FirebaseFirestore.Query = adminDb().collection(PARTS_COLLECTION).where('stockStatus', '==', 'Available')
 
   if (category) q = q.where('category', '==', category)
   if (make) q = q.where('vehicleMake', '==', make)
@@ -56,13 +56,13 @@ export async function getAvailableParts(options: PublicPartsQuery = {}): Promise
 }
 
 export async function getPartById(id: string): Promise<Part | null> {
-  const doc = await adminDb.collection(PARTS_COLLECTION).doc(id).get()
+  const doc = await adminDb().collection(PARTS_COLLECTION).doc(id).get()
   if (!doc.exists) return null
   return { id: doc.id, ...doc.data() } as Part
 }
 
 export async function getRecentParts(limit = 5): Promise<Part[]> {
-  const snapshot = await adminDb
+  const snapshot = await adminDb()
     .collection(PARTS_COLLECTION)
     .where('stockStatus', '==', 'Available')
     .orderBy('createdAt', 'desc')
@@ -73,7 +73,7 @@ export async function getRecentParts(limit = 5): Promise<Part[]> {
 }
 
 export async function getAllPartIds(): Promise<string[]> {
-  const snapshot = await adminDb
+  const snapshot = await adminDb()
     .collection(PARTS_COLLECTION)
     .where('stockStatus', '==', 'Available')
     .select()

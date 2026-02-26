@@ -12,14 +12,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the ID token and create a session cookie
-    const decodedToken = await adminAuth.verifyIdToken(idToken)
+    const decodedToken = await adminAuth().verifyIdToken(idToken)
 
     // Only allow verified email accounts
     if (!decodedToken.email) {
       return NextResponse.json({ error: 'No email associated with account' }, { status: 403 })
     }
 
-    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
+    const sessionCookie = await adminAuth().createSessionCookie(idToken, {
       expiresIn: SESSION_EXPIRY,
     })
 
