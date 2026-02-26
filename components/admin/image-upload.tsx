@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useRef, useState } from 'react'
-import { X, Upload, Camera } from 'lucide-react'
+import { X, Upload, Camera, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface ImageUploadProps {
@@ -77,80 +77,103 @@ export function ImageUpload({
     }
   }
 
+  function openCamera() {
+    const cameraInput = document.createElement('input')
+    cameraInput.type = 'file'
+    cameraInput.accept = 'image/*'
+    cameraInput.capture = 'environment'
+    cameraInput.onchange = (ev) => {
+      const target = ev.target as HTMLInputElement
+      if (target.files) validateAndAdd(target.files)
+    }
+    cameraInput.click()
+  }
+
   return (
     <div>
-      {/* Preview grid */}
+      {/* Preview grid — bigger on mobile */}
       {images.length > 0 && (
-        <div className="mb-3 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+        <div className="mb-3 grid grid-cols-3 gap-2">
           {images.map((src, i) => (
-            <div key={src} className="group relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+            <div key={src} className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               <img src={src} alt={`Part photo ${i + 1}`} className="h-full w-full object-cover" />
               <button
                 type="button"
                 onClick={() => onRemove(i)}
-                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition-opacity md:opacity-0 md:group-hover:opacity-100"
                 aria-label={`Remove photo ${i + 1}`}
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Upload zone */}
+      {/* Upload buttons */}
       {canAdd && (
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onClick={() => inputRef.current?.click()}
-          className={cn(
-            'flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors',
-            dragActive
-              ? 'border-orange-400 bg-orange-50'
-              : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
+        <>
+          {uploading ? (
+            <div className="flex items-center justify-center gap-2 rounded-xl border border-orange-200 bg-orange-50 p-6">
+              <Loader2 className="h-5 w-5 animate-spin text-orange-500" />
+              <span className="text-sm font-medium text-orange-700">Uploading...</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">
+              {/* Camera button — primary on mobile */}
+              <button
+                type="button"
+                onClick={openCamera}
+                className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-orange-300 bg-orange-50 p-6 text-center transition-colors hover:border-orange-400 hover:bg-orange-100 active:bg-orange-100 sm:hidden"
+              >
+                <Camera className="h-8 w-8 text-orange-500" />
+                <span className="text-sm font-bold text-orange-700">Take Photo</span>
+              </button>
+
+              {/* File picker */}
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onClick={() => inputRef.current?.click()}
+                className={cn(
+                  'flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-colors',
+                  dragActive
+                    ? 'border-orange-400 bg-orange-50'
+                    : 'border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
+                )}
+              >
+                <Upload className="mb-2 h-6 w-6 text-slate-400" />
+                <p className="text-sm font-medium text-slate-600">
+                  <span className="hidden sm:inline">Drop photos here or click to upload</span>
+                  <span className="sm:hidden">Choose Photos</span>
+                </p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {images.length}/{maxImages} &middot; Max 10MB each
+                </p>
+
+                <input
+                  ref={inputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Camera on desktop — smaller link */}
+              <button
+                type="button"
+                onClick={openCamera}
+                className="mt-2 hidden items-center justify-center gap-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 sm:inline-flex"
+              >
+                <Camera className="h-4 w-4" />
+                Or take a photo with camera
+              </button>
+            </div>
           )}
-        >
-          <Upload className="mb-2 h-6 w-6 text-slate-400" />
-          <p className="text-sm font-medium text-slate-600">
-            {uploading ? 'Uploading...' : 'Drop photos here or click to upload'}
-          </p>
-          <p className="mt-1 text-xs text-slate-400">
-            {images.length}/{maxImages} photos &middot; Max 10MB each
-          </p>
-
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            multiple
-            onChange={handleFileChange}
-            className="hidden"
-          />
-
-          {/* Mobile camera button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              const cameraInput = document.createElement('input')
-              cameraInput.type = 'file'
-              cameraInput.accept = 'image/*'
-              cameraInput.capture = 'environment'
-              cameraInput.onchange = (ev) => {
-                const target = ev.target as HTMLInputElement
-                if (target.files) validateAndAdd(target.files)
-              }
-              cameraInput.click()
-            }}
-            className="mt-3 flex items-center gap-1.5 text-xs font-medium text-orange-600 hover:text-orange-700 md:hidden"
-          >
-            <Camera className="h-4 w-4" />
-            Take Photo
-          </button>
-        </div>
+        </>
       )}
 
       {error && <p className="mt-2 text-xs text-red-600">{error}</p>}

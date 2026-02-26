@@ -11,7 +11,16 @@ import { StatusBadge } from '@/components/admin/status-badge'
 import { ConfirmDialog } from '@/components/admin/confirm-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { PlusCircle, Pencil, Trash2, ChevronRight } from 'lucide-react'
+import {
+  PlusCircle,
+  Pencil,
+  Trash2,
+  ChevronRight,
+  Package,
+  SlidersHorizontal,
+  Loader2,
+  Camera,
+} from 'lucide-react'
 
 function formatPrice(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`
@@ -33,6 +42,7 @@ function InventoryContent() {
   const [loading, setLoading] = useState(true)
   const [cursor, setCursor] = useState<DocumentSnapshot | null>(null)
   const [hasMore, setHasMore] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   // Filters
   const [statusFilter, setStatusFilter] = useState<StockStatus | ''>(initialStatus)
@@ -140,61 +150,83 @@ function InventoryContent() {
     }
   }
 
+  const activeFilterCount = [statusFilter, categoryFilter, makeFilter].filter(Boolean).length
+
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      {/* Header */}
+      <div className="mb-4 flex items-center justify-between gap-2">
         <h1 className="text-xl font-bold text-slate-900">Inventory</h1>
-        <Button asChild size="sm">
-          <Link href="/admin/inventory/new">
-            <PlusCircle className="h-4 w-4" />
-            Add Part
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowFilters((s) => !s)}
+            className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm font-medium transition-colors ${
+              showFilters || activeFilterCount > 0
+                ? 'border-orange-200 bg-orange-50 text-orange-700'
+                : 'border-slate-200 bg-white text-slate-600'
+            }`}
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            {activeFilterCount > 0 && (
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+          <Button asChild size="sm">
+            <Link href="/admin/inventory/new">
+              <PlusCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">Add Part</span>
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      {/* Filters */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as StockStatus | '')}
-          className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700"
-        >
-          <option value="">All Statuses</option>
-          {STOCK_STATUSES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+      {/* Filters (collapsible) */}
+      {showFilters && (
+        <div className="mb-4 grid grid-cols-1 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:grid-cols-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StockStatus | '')}
+            className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700"
+          >
+            <option value="">All Statuses</option>
+            {STOCK_STATUSES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
 
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value as PartCategory | '')}
-          className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700"
-        >
-          <option value="">All Categories</option>
-          {PART_CATEGORIES.map((c) => (
-            <option key={c} value={c}>{PART_CATEGORY_LABELS[c]}</option>
-          ))}
-        </select>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value as PartCategory | '')}
+            className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700"
+          >
+            <option value="">All Categories</option>
+            {PART_CATEGORIES.map((c) => (
+              <option key={c} value={c}>{PART_CATEGORY_LABELS[c]}</option>
+            ))}
+          </select>
 
-        <Input
-          value={makeFilter}
-          onChange={(e) => setMakeFilter(e.target.value)}
-          placeholder="Filter by make..."
-          className="h-9 w-40"
-        />
-      </div>
+          <Input
+            value={makeFilter}
+            onChange={(e) => setMakeFilter(e.target.value)}
+            placeholder="Filter by make..."
+            className="h-10"
+          />
+        </div>
+      )}
 
       {/* Bulk actions */}
       {selected.size > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg bg-orange-50 px-3 py-2">
-          <span className="text-sm font-medium text-orange-700">
+        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl bg-orange-50 border border-orange-200 px-3 py-2">
+          <span className="text-sm font-semibold text-orange-700">
             {selected.size} selected
           </span>
           <Button size="sm" variant="outline" onClick={() => handleBulkStatus('Available')}>
-            Mark Available
+            Available
           </Button>
           <Button size="sm" variant="outline" onClick={() => handleBulkStatus('Sold')}>
-            Mark Sold
+            Sold
           </Button>
           <Button size="sm" variant="destructive" onClick={handleBulkDelete}>
             <Trash2 className="h-3.5 w-3.5" />
@@ -203,133 +235,148 @@ function InventoryContent() {
         </div>
       )}
 
-      {/* Desktop table */}
-      <div className="hidden overflow-x-auto rounded-xl border border-slate-200 bg-white md:block">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50">
-            <tr>
-              <th className="px-4 py-3">
-                <input
-                  type="checkbox"
-                  checked={parts.length > 0 && selected.size === parts.length}
-                  onChange={toggleSelectAll}
-                  className="rounded"
-                />
-              </th>
-              <th className="px-4 py-3 font-medium text-slate-500">Photo</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Part Name</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Vehicle</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Category</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Status</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Price</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {parts.map((part) => (
-              <tr key={part.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={selected.has(part.id)}
-                    onChange={() => toggleSelect(part.id)}
-                    className="rounded"
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  {part.photos[0] ? (
-                    <img
-                      src={part.photos[0]}
-                      alt={part.name}
-                      className="h-10 w-10 rounded-md object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-100 text-xs text-slate-400">
-                      No img
-                    </div>
-                  )}
-                </td>
-                <td className="px-4 py-3 font-medium text-slate-900">{part.name}</td>
-                <td className="px-4 py-3 text-slate-600">
-                  {part.vehicleYear} {part.vehicleMake} {part.vehicleModel}
-                </td>
-                <td className="px-4 py-3 text-slate-600">
-                  {PART_CATEGORY_LABELS[part.category]}
-                </td>
-                <td className="px-4 py-3">
-                  <StatusBadge status={part.stockStatus} />
-                </td>
-                <td className="px-4 py-3 font-medium">{formatPrice(part.price)}</td>
-                <td className="px-4 py-3">
-                  <Link
-                    href={`/admin/inventory/${part.id}/edit`}
-                    className="inline-flex items-center gap-1 text-sm text-orange-600 hover:text-orange-700"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {parts.length === 0 && !loading && (
-          <div className="py-12 text-center text-sm text-slate-500">
-            No parts found. {statusFilter || categoryFilter || makeFilter ? 'Try adjusting your filters.' : ''}
-          </div>
-        )}
-      </div>
-
-      {/* Mobile card view */}
-      <div className="space-y-3 md:hidden">
-        {parts.map((part) => (
-          <Link
-            key={part.id}
-            href={`/admin/inventory/${part.id}/edit`}
-            className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3"
-          >
-            {part.photos[0] ? (
-              <img
-                src={part.photos[0]}
-                alt={part.name}
-                className="h-14 w-14 flex-shrink-0 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs text-slate-400">
-                No img
-              </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-slate-900">{part.name}</p>
-              <p className="truncate text-xs text-slate-500">
-                {part.vehicleYear} {part.vehicleMake} {part.vehicleModel}
-              </p>
-              <div className="mt-1 flex items-center gap-2">
-                <StatusBadge status={part.stockStatus} />
-                <span className="text-xs font-semibold text-slate-700">{formatPrice(part.price)}</span>
-              </div>
-            </div>
-            <ChevronRight className="h-4 w-4 flex-shrink-0 text-slate-300" />
-          </Link>
-        ))}
-
-        {parts.length === 0 && !loading && (
-          <div className="py-12 text-center text-sm text-slate-500">
-            No parts found.
-          </div>
-        )}
-      </div>
-
       {/* Loading */}
       {loading && (
-        <div className="py-8 text-center text-sm text-slate-500">Loading...</div>
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-orange-500" />
+          <span className="ml-2 text-sm text-slate-500">Loading...</span>
+        </div>
+      )}
+
+      {/* Desktop table */}
+      {!loading && (
+        <div className="hidden overflow-x-auto rounded-xl border border-slate-200 bg-white md:block">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-slate-200 bg-slate-50">
+              <tr>
+                <th className="px-4 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    checked={parts.length > 0 && selected.size === parts.length}
+                    onChange={toggleSelectAll}
+                    className="rounded"
+                  />
+                </th>
+                <th className="px-4 py-3 font-medium text-slate-500">Photo</th>
+                <th className="px-4 py-3 font-medium text-slate-500">Part Name</th>
+                <th className="px-4 py-3 font-medium text-slate-500">Vehicle</th>
+                <th className="px-4 py-3 font-medium text-slate-500">Category</th>
+                <th className="px-4 py-3 font-medium text-slate-500">Status</th>
+                <th className="px-4 py-3 font-medium text-slate-500">Price</th>
+                <th className="px-4 py-3 font-medium text-slate-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {parts.map((part) => (
+                <tr key={part.id} className={`hover:bg-slate-50 ${selected.has(part.id) ? 'bg-orange-50/50' : ''}`}>
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(part.id)}
+                      onChange={() => toggleSelect(part.id)}
+                      className="rounded"
+                    />
+                  </td>
+                  <td className="px-4 py-2">
+                    {part.photos[0] ? (
+                      <img
+                        src={part.photos[0]}
+                        alt={part.name}
+                        className="h-14 w-14 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-slate-100">
+                        <Package className="h-5 w-5 text-slate-300" />
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 font-medium text-slate-900">{part.name}</td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {part.vehicleYear} {part.vehicleMake} {part.vehicleModel}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {PART_CATEGORY_LABELS[part.category]}
+                  </td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={part.stockStatus} />
+                  </td>
+                  <td className="px-4 py-3 font-semibold">{formatPrice(part.price)}</td>
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/admin/inventory/${part.id}/edit`}
+                      className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+                    >
+                      <Pencil className="h-3 w-3" />
+                      Edit
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {parts.length === 0 && (
+            <div className="py-12 text-center text-sm text-slate-500">
+              No parts found. {activeFilterCount > 0 ? 'Try adjusting your filters.' : ''}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mobile card view — big photos */}
+      {!loading && (
+        <div className="grid grid-cols-2 gap-2.5 md:hidden">
+          {parts.map((part) => (
+            <Link
+              key={part.id}
+              href={`/admin/inventory/${part.id}/edit`}
+              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all active:scale-[0.97]"
+            >
+              {/* Big photo */}
+              <div className="relative aspect-square bg-slate-100">
+                {part.photos[0] ? (
+                  <img
+                    src={part.photos[0]}
+                    alt={part.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full flex-col items-center justify-center gap-1 text-slate-300">
+                    <Camera className="h-8 w-8" />
+                    <span className="text-[10px]">No photo</span>
+                  </div>
+                )}
+                <div className="absolute left-1.5 top-1.5">
+                  <StatusBadge status={part.stockStatus} />
+                </div>
+              </div>
+
+              {/* Info */}
+              <div className="p-2.5">
+                <p className="truncate text-sm font-bold text-slate-900">{part.name}</p>
+                <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                  {part.vehicleYear} {part.vehicleMake} {part.vehicleModel}
+                </p>
+                <p className="mt-1 text-base font-black text-slate-900">
+                  {formatPrice(part.price)}
+                </p>
+              </div>
+            </Link>
+          ))}
+
+          {parts.length === 0 && (
+            <div className="col-span-2 py-16 text-center">
+              <Package className="mx-auto h-8 w-8 text-slate-300" />
+              <p className="mt-2 text-sm text-slate-500">No parts found</p>
+            </div>
+          )}
+        </div>
       )}
 
       {/* Pagination */}
       {hasMore && !loading && (
-        <div className="mt-4 text-center">
-          <Button variant="outline" onClick={() => fetchParts(true)}>
+        <div className="mt-6 text-center">
+          <Button variant="outline" onClick={() => fetchParts(true)} className="w-full sm:w-auto">
             Load More
           </Button>
         </div>
