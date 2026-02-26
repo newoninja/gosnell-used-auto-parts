@@ -8,7 +8,7 @@ import { StatusBadge } from '@/components/admin/status-badge'
 import { BUSINESS } from '@/lib/utils'
 import { PartPhotoGallery } from '@/components/part-photo-gallery'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 interface PageProps {
   params: Promise<{ id: string }>
