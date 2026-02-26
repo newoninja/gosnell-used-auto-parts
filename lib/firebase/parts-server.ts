@@ -17,6 +17,7 @@ interface PublicPartsQuery {
   make?: string
   model?: string
   year?: number
+  search?: string
   pageSize?: number
   offset?: number
 }
@@ -25,34 +26,46 @@ async function _getAvailableParts(options: PublicPartsQuery = {}): Promise<{
   parts: Part[]
   total: number
 }> {
-  const { category, make, model, year, pageSize = 24, offset = 0 } = options
+  const { category, make, model, year, search, pageSize = 24, offset = 0 } = options
 
-  let q: FirebaseFirestore.Query = adminDb().collection(PARTS_COLLECTION).where('stockStatus', '==', 'Available')
+  // Fetch all available parts with a simple query (no composite index needed)
+  const snapshot = await adminDb()
+    .collection(PARTS_COLLECTION)
+    .where('stockStatus', '==', 'Available')
+    .orderBy('createdAt', 'desc')
+    .get()
 
-  if (category) q = q.where('category', '==', category)
-  if (make) q = q.where('vehicleMake', '==', make)
-  if (year) q = q.where('vehicleYear', '==', year)
-
-  q = q.orderBy('createdAt', 'desc')
-
-  // Get total count (for pagination display)
-  const countSnap = await q.count().get()
-  const total = countSnap.data().count
-
-  // Paginate
-  if (offset > 0) {
-    q = q.offset(offset)
-  }
-  q = q.limit(pageSize)
-
-  const snapshot = await q.get()
   let parts = snapshot.docs.map(docToPart)
 
-  // Client-side filter for model (Firestore can't do inequality + orderBy on different fields easily)
+  // Filter in JavaScript (case-insensitive, avoids Firestore composite index issues)
+  if (category) {
+    parts = parts.filter((p) => p.category === category)
+  }
+  if (make) {
+    const makeLower = make.toLowerCase()
+    parts = parts.filter((p) => p.vehicleMake.toLowerCase().includes(makeLower))
+  }
   if (model) {
     const modelLower = model.toLowerCase()
     parts = parts.filter((p) => p.vehicleModel.toLowerCase().includes(modelLower))
   }
+  if (year) {
+    parts = parts.filter((p) => p.vehicleYear === year)
+  }
+  if (search) {
+    const q = search.toLowerCase()
+    parts = parts.filter((p) =>
+      p.name.toLowerCase().includes(q) ||
+      p.vehicleMake.toLowerCase().includes(q) ||
+      p.vehicleModel.toLowerCase().includes(q) ||
+      (p.notes && p.notes.toLowerCase().includes(q))
+    )
+  }
+
+  const total = parts.length
+
+  // Paginate
+  parts = parts.slice(offset, offset + pageSize)
 
   return { parts, total }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -10,11 +10,7 @@ import {
   query,
   where,
   orderBy,
-  limit,
   getDocs,
-  getCountFromServer,
-  startAfter,
-  type QueryConstraint,
   type DocumentSnapshot,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase/client'
@@ -42,12 +38,8 @@ export function InventoryGrid() {
   const model = searchParams.get('model') || ''
   const year = searchParams.get('year') || ''
 
-  const [parts, setParts] = useState<Part[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null)
-  const [hasMore, setHasMore] = useState(false)
 
   // Filter form state (local until submit)
   const [formCategory, setFormCategory] = useState(category)
@@ -63,91 +55,51 @@ export function InventoryGrid() {
     setFormYear(year)
   }, [category, make, model, year])
 
-  const fetchParts = useCallback(async () => {
+  // All parts cache (fetched once, filtered in JS)
+  const [allParts, setAllParts] = useState<Part[]>([])
+  const [page, setPage] = useState(1)
+
+  // Fetch all available parts once (simple query, no composite index needed)
+  useEffect(() => {
     setLoading(true)
-    try {
-      const constraints: QueryConstraint[] = [
-        where('stockStatus', '==', 'Available'),
-      ]
+    const q = query(
+      collection(db, 'parts'),
+      where('stockStatus', '==', 'Available'),
+      orderBy('createdAt', 'desc')
+    )
+    getDocs(q)
+      .then((snapshot) => {
+        setAllParts(snapshot.docs.map(docToPart))
+      })
+      .catch((err) => {
+        console.error('Failed to fetch parts:', err)
+        setAllParts([])
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
-      if (category) constraints.push(where('category', '==', category))
-      if (make) constraints.push(where('vehicleMake', '==', make))
-      if (year) constraints.push(where('vehicleYear', '==', parseInt(year, 10)))
+  // Filter in JavaScript (case-insensitive)
+  const filtered = allParts.filter((p) => {
+    if (category && p.category !== category) return false
+    if (make && !p.vehicleMake.toLowerCase().includes(make.toLowerCase())) return false
+    if (model && !p.vehicleModel.toLowerCase().includes(model.toLowerCase())) return false
+    if (year && p.vehicleYear !== parseInt(year, 10)) return false
+    return true
+  })
 
-      constraints.push(orderBy('createdAt', 'desc'))
+  const totalFiltered = filtered.length
+  const displayedParts = filtered.slice(0, page * PAGE_SIZE)
+  const hasMore = displayedParts.length < totalFiltered
 
-      // Get count
-      const countQuery = query(collection(db, 'parts'), ...constraints)
-      const countSnap = await getCountFromServer(countQuery)
-      setTotal(countSnap.data().count)
-
-      // Get first page
-      const dataQuery = query(collection(db, 'parts'), ...constraints, limit(PAGE_SIZE))
-      const snapshot = await getDocs(dataQuery)
-
-      let fetchedParts = snapshot.docs.map(docToPart)
-
-      // Client-side model filter
-      if (model) {
-        const modelLower = model.toLowerCase()
-        fetchedParts = fetchedParts.filter((p) =>
-          p.vehicleModel.toLowerCase().includes(modelLower)
-        )
-      }
-
-      setParts(fetchedParts)
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null)
-      setHasMore(snapshot.docs.length === PAGE_SIZE)
-    } catch (err) {
-      console.error('Failed to fetch parts:', err)
-      setParts([])
-      setTotal(0)
-    } finally {
-      setLoading(false)
-    }
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1)
   }, [category, make, model, year])
 
+  // Sync total for display
   useEffect(() => {
-    fetchParts()
-  }, [fetchParts])
-
-  const loadMore = async () => {
-    if (!lastDoc || loadingMore) return
-    setLoadingMore(true)
-    try {
-      const constraints: QueryConstraint[] = [
-        where('stockStatus', '==', 'Available'),
-      ]
-
-      if (category) constraints.push(where('category', '==', category))
-      if (make) constraints.push(where('vehicleMake', '==', make))
-      if (year) constraints.push(where('vehicleYear', '==', parseInt(year, 10)))
-
-      constraints.push(orderBy('createdAt', 'desc'))
-      constraints.push(startAfter(lastDoc))
-      constraints.push(limit(PAGE_SIZE))
-
-      const dataQuery = query(collection(db, 'parts'), ...constraints)
-      const snapshot = await getDocs(dataQuery)
-
-      let fetchedParts = snapshot.docs.map(docToPart)
-
-      if (model) {
-        const modelLower = model.toLowerCase()
-        fetchedParts = fetchedParts.filter((p) =>
-          p.vehicleModel.toLowerCase().includes(modelLower)
-        )
-      }
-
-      setParts((prev) => [...prev, ...fetchedParts])
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null)
-      setHasMore(snapshot.docs.length === PAGE_SIZE)
-    } catch (err) {
-      console.error('Failed to load more parts:', err)
-    } finally {
-      setLoadingMore(false)
-    }
-  }
+    setTotal(totalFiltered)
+  }, [totalFiltered])
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault()
@@ -254,13 +206,13 @@ export function InventoryGrid() {
             <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
             <span className="ml-3 text-sm text-slate-500">Loading inventory...</span>
           </div>
-        ) : parts.length > 0 ? (
+        ) : displayedParts.length > 0 ? (
           <>
             <p className="mb-6 text-sm text-slate-500">
-              {total} part{total !== 1 ? 's' : ''} available
+              {totalFiltered} part{totalFiltered !== 1 ? 's' : ''} available
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {parts.map((part) => (
+              {displayedParts.map((part) => (
                 <Link
                   key={part.id}
                   href={`/inventory/${part.id}`}
@@ -307,18 +259,10 @@ export function InventoryGrid() {
             {hasMore && (
               <div className="mt-8 flex justify-center">
                 <button
-                  onClick={loadMore}
-                  disabled={loadingMore}
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                  onClick={() => setPage((p) => p + 1)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                 >
-                  {loadingMore ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    'Load More Parts'
-                  )}
+                  Load More Parts
                 </button>
               </div>
             )}
