@@ -42,7 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     if (!res.ok) {
-      throw new Error('Failed to create session')
+      const data = await res.json().catch(() => ({}))
+      throw new Error(data.error || 'Failed to create session')
     }
   }, [])
 

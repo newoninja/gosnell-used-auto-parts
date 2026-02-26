@@ -25,8 +25,15 @@ function LoginForm() {
     try {
       await signIn(email, password)
       router.push(redirect)
-    } catch {
-      setError('Invalid email or password')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      if (msg.includes('auth/user-not-found') || msg.includes('auth/wrong-password') || msg.includes('auth/invalid-credential')) {
+        setError('Invalid email or password')
+      } else if (msg.includes('Failed to create session')) {
+        setError('Login succeeded but session creation failed. Check server Firebase Admin config.')
+      } else {
+        setError(msg)
+      }
     } finally {
       setLoading(false)
     }
