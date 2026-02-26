@@ -75,10 +75,15 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="mt-10 border-t border-slate-800 pt-4 text-center text-xs text-slate-400 md:text-left">
-          © {new Date().getFullYear()} {BUSINESS.name}. Built with pride in North Carolina. {' '}
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-white">Privacy Policy</Link>
-        </p>
+        <div className="mt-10 flex items-center justify-between border-t border-slate-800 pt-4 text-xs text-slate-400">
+          <p>
+            © {new Date().getFullYear()} {BUSINESS.name}. Built with pride in North Carolina. {' '}
+            <Link href="/privacy" className="underline underline-offset-2 hover:text-white">Privacy Policy</Link>
+          </p>
+          <Link href="/admin" className="text-slate-600 transition-colors hover:text-slate-400">
+            Admin
+          </Link>
+        </div>
       </div>
     </footer>
   )

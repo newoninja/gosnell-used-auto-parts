@@ -36,14 +36,22 @@ export default async function InventoryPage({ searchParams }: PageProps) {
   const pageSize = 24
   const offset = (page - 1) * pageSize
 
-  const { parts, total } = await getAvailableParts({
-    category: params.category as PartCategory | undefined,
-    make: params.make || undefined,
-    model: params.model || undefined,
-    year: params.year ? parseInt(params.year, 10) : undefined,
-    pageSize,
-    offset,
-  })
+  let parts: import('@/lib/types/inventory').Part[] = []
+  let total = 0
+  try {
+    const result = await getAvailableParts({
+      category: params.category as PartCategory | undefined,
+      make: params.make || undefined,
+      model: params.model || undefined,
+      year: params.year ? parseInt(params.year, 10) : undefined,
+      pageSize,
+      offset,
+    })
+    parts = result.parts
+    total = result.total
+  } catch {
+    // Firebase may not be available — show empty state
+  }
 
   const totalPages = Math.ceil(total / pageSize)
 

@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   BadgeCheck,
-  CarFront,
   CheckCircle2,
   Clock3,
   ExternalLink,
@@ -19,6 +18,10 @@ import {
 } from 'lucide-react'
 import { RequestPartForm } from '@/components/request-part-form'
 import { BUSINESS, isCurrentlyOpen } from '@/lib/utils'
+import { getRecentParts } from '@/lib/firebase/parts-server'
+import type { Part } from '@/lib/types/inventory'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Gosnell Used Auto Parts | OEM Used Car & Truck Parts Flat Rock NC | (828) 696-2500',
@@ -134,8 +137,19 @@ const faqs = [
   },
 ]
 
-export default function HomePage() {
+function formatPrice(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`
+}
+
+export default async function HomePage() {
   const currentlyOpen = isCurrentlyOpen()
+
+  let recentParts: Part[] = []
+  try {
+    recentParts = await getRecentParts(8)
+  } catch {
+    // Firebase may not be available during build or if credentials are missing
+  }
 
   return (
     <main id="home" className="bg-slate-100">
@@ -292,39 +306,68 @@ export default function HomePage() {
       </section>
 
       <section id="inventory" className="border-y border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-forest-700">Live Inventory</p>
-            <h2 className="mt-3 font-heading text-3xl font-black text-slate-950 sm:text-4xl">Search Our Parts Inventory Online</h2>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
-              Search by year, make, model, and part type through our inventory.
-              If you do not see what you need, call us and we can check additional yard stock.
-            </p>
-            <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
-              <Link
-                href="/inventory"
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-5 py-3 text-sm font-black text-white transition-colors hover:bg-orange-400 sm:w-auto"
-              >
-                <Search className="h-4 w-4" aria-hidden="true" />
-                Browse Inventory
-              </Link>
-              <a
-                href={BUSINESS.phones.mainHref}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-900 transition-colors hover:bg-slate-100 sm:w-auto"
-              >
-                Need help? Call us
-              </a>
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-forest-700">Live Inventory</p>
+              <h2 className="mt-3 font-heading text-3xl font-black text-slate-950 sm:text-4xl">Recently Added Parts</h2>
+              <p className="mt-3 max-w-2xl text-sm text-slate-600 sm:text-base">
+                Browse our latest stock below, or search the full inventory for exactly what you need.
+              </p>
             </div>
+            <Link
+              href="/inventory"
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg bg-orange-500 px-5 py-3 text-sm font-black text-white transition-colors hover:bg-orange-400"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+              View All Inventory
+            </Link>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h3 className="font-heading text-lg font-black text-slate-900">Search Tips</h3>
-            <ul className="mt-4 space-y-3">
-              <li className="flex items-start gap-2 text-sm text-slate-700"><CarFront className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" /> Include exact year/make/model.</li>
-              <li className="flex items-start gap-2 text-sm text-slate-700"><BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" /> Add VIN when possible for best fitment.</li>
-              <li className="flex items-start gap-2 text-sm text-slate-700"><Phone className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" /> Call for hard-to-find parts and same-day pulls.</li>
-            </ul>
-          </div>
+          {recentParts.length > 0 ? (
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {recentParts.map((part) => (
+                <Link
+                  key={part.id}
+                  href={`/inventory/${part.id}`}
+                  className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+                >
+                  <div className="relative aspect-[4/3] bg-slate-100">
+                    {part.photos?.[0] ? (
+                      <Image
+                        src={part.photos[0]}
+                        alt={part.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-sm text-slate-400">No photo</div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-sm font-bold text-slate-900 transition-colors group-hover:text-orange-600">
+                      {part.name}
+                    </h3>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {part.vehicleYear} {part.vehicleMake} {part.vehicleModel}
+                    </p>
+                    <p className="mt-2 text-lg font-black text-slate-900">{formatPrice(part.price)}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
+              <p className="text-sm text-slate-600">
+                No parts listed yet. Call us at{' '}
+                <a href={BUSINESS.phones.mainHref} className="font-bold text-orange-600 hover:text-orange-700">
+                  {BUSINESS.phones.main}
+                </a>{' '}
+                to ask about available stock.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
