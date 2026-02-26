@@ -13,6 +13,7 @@ function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
 
   const redirect = searchParams.get('redirect') || '/admin'
@@ -20,17 +21,21 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+    setStatus('Authenticating...')
     setLoading(true)
 
     try {
+      setStatus('Signing in with Firebase...')
       await signIn(email, password)
+      setStatus('Success! Redirecting...')
       router.push(redirect)
     } catch (err: unknown) {
+      setStatus('')
       const msg = err instanceof Error ? err.message : String(err)
       if (msg.includes('auth/user-not-found') || msg.includes('auth/wrong-password') || msg.includes('auth/invalid-credential')) {
         setError('Invalid email or password')
-      } else if (msg.includes('Failed to create session')) {
-        setError('Login succeeded but session creation failed. Check server Firebase Admin config.')
+      } else if (msg.includes('Failed to create session') || msg.includes('Session failed')) {
+        setError(msg)
       } else {
         setError(msg)
       }
@@ -44,6 +49,11 @@ function LoginForm() {
       {error && (
         <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
+        </div>
+      )}
+      {status && !error && (
+        <div className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-600">
+          {status}
         </div>
       )}
 
