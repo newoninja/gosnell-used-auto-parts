@@ -80,7 +80,7 @@ export function SiteFooter() {
             © {new Date().getFullYear()} {BUSINESS.name}. Built with pride in North Carolina. {' '}
             <Link href="/privacy" className="underline underline-offset-2 hover:text-white">Privacy Policy</Link>
           </p>
-          <Link href="/admin" className="text-slate-600 transition-colors hover:text-slate-400">
+          <Link href="/admin" className="text-slate-500 transition-colors hover:text-white">
             Admin
           </Link>
         </div>

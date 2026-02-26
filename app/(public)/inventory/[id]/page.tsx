@@ -8,7 +8,7 @@ import { StatusBadge } from '@/components/admin/status-badge'
 import { BUSINESS } from '@/lib/utils'
 import { PartPhotoGallery } from '@/components/part-photo-gallery'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -16,13 +16,17 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const part = await getPartById(id)
-  if (!part) return { title: 'Part Not Found' }
+  try {
+    const part = await getPartById(id)
+    if (!part) return { title: 'Part Not Found' }
 
-  return {
-    title: `${part.name} — ${part.vehicleYear} ${part.vehicleMake} ${part.vehicleModel}`,
-    description: `Used ${part.name} for ${part.vehicleYear} ${part.vehicleMake} ${part.vehicleModel}. ${part.condition} condition. $${(part.price / 100).toFixed(2)}. Available at Gosnell Used Auto Parts in Flat Rock, NC.`,
-    alternates: { canonical: `/inventory/${id}` },
+    return {
+      title: `${part.name} — ${part.vehicleYear} ${part.vehicleMake} ${part.vehicleModel}`,
+      description: `Used ${part.name} for ${part.vehicleYear} ${part.vehicleMake} ${part.vehicleModel}. ${part.condition} condition. $${(part.price / 100).toFixed(2)}. Available at Gosnell Used Auto Parts in Flat Rock, NC.`,
+      alternates: { canonical: `/inventory/${id}` },
+    }
+  } catch {
+    return { title: 'Inventory' }
   }
 }
 
@@ -32,7 +36,12 @@ function formatPrice(cents: number): string {
 
 export default async function PartDetailPage({ params }: PageProps) {
   const { id } = await params
-  const part = await getPartById(id)
+  let part = null
+  try {
+    part = await getPartById(id)
+  } catch {
+    // Firebase unavailable
+  }
 
   if (!part) notFound()
 

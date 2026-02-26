@@ -7,7 +7,7 @@ import { getAvailableParts } from '@/lib/firebase/parts-server'
 import { PART_CATEGORIES, PART_CATEGORY_LABELS, type PartCategory } from '@/lib/types/inventory'
 import { StatusBadge } from '@/components/admin/status-badge'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Inventory',
