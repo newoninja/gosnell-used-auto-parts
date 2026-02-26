@@ -194,6 +194,13 @@ export default async function HomePage() {
               Call {BUSINESS.phones.main}
             </a>
             <Link
+              href="/inventory"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-forest-800 px-6 py-3 text-base font-black text-white transition-colors hover:bg-forest-700 sm:w-auto"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+              Browse Inventory
+            </Link>
+            <Link
               href="/contact"
               className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-slate-200/40 bg-white/10 px-6 py-3 text-base font-black text-white backdrop-blur-sm transition-colors hover:bg-white/20 sm:w-auto"
             >
