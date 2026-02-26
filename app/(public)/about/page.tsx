@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
 import { BUSINESS } from '@/lib/utils'
+import { AboutSection } from '@/components/about-section'
+import { MeetTheOwner } from '@/components/meet-the-owner'
+import { Testimonials } from '@/components/testimonials'
+import { LocationHours } from '@/components/location-hours'
 
 export const metadata: Metadata = {
   title: 'About',
@@ -24,31 +28,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
-        <div className="grid gap-6 md:grid-cols-2">
-          <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="font-heading text-xl font-bold text-slate-900">Our approach</h2>
-            <p className="mt-3 text-sm text-slate-600">
-              We keep things simple: listen to what you need, check inventory, and give you a clear answer.
-              If we have it, we help you get it quickly. If we do not, we tell you directly.
-            </p>
-          </article>
-
-          <article className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="font-heading text-xl font-bold text-slate-900">Where we serve</h2>
-            <p className="mt-3 text-sm text-slate-600">
-              Based in Flat Rock, we regularly serve Hendersonville, Asheville, and surrounding
-              communities across Western North Carolina.
-            </p>
-          </article>
-        </div>
-
-        <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-          <h2 className="font-heading text-xl font-bold text-slate-900">Location</h2>
-          <p className="mt-2 text-sm text-slate-600">{BUSINESS.address.full}</p>
-          <p className="mt-1 text-sm text-slate-600">Main phone: {BUSINESS.phones.main}</p>
-        </div>
-      </section>
+      <MeetTheOwner />
+      <AboutSection />
+      <Testimonials />
+      <LocationHours />
     </main>
   )
 }
