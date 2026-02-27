@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   BadgeCheck,
+  Car,
   CheckCircle2,
   Clock3,
   ExternalLink,
@@ -17,6 +18,9 @@ import {
   Wrench,
 } from 'lucide-react'
 import { RequestPartForm } from '@/components/request-part-form'
+import { Testimonials } from '@/components/testimonials'
+import { HeroSearch } from '@/components/hero-search'
+import { JunkCarsCta } from '@/components/junk-cars-cta'
 import { BUSINESS, isCurrentlyOpen } from '@/lib/utils'
 import { getRecentParts } from '@/lib/firebase/parts-server'
 import type { Part } from '@/lib/types/inventory'
@@ -83,27 +87,6 @@ const galleryItems = [
   { src: '/hendersonville.jpg', alt: 'Local roads near Gosnell Used Auto Parts' },
 ]
 
-const testimonials = [
-  {
-    quote:
-      'Fast answers and fair pricing. They matched my part correctly the first time and had it ready same day.',
-    name: 'Local Customer',
-    area: 'Hendersonville, NC',
-  },
-  {
-    quote:
-      'I called three places and Gosnell was the only one that actually helped me verify fitment before I drove over.',
-    name: 'Shop Owner',
-    area: 'Flat Rock, NC',
-  },
-  {
-    quote:
-      'Straightforward and honest. No runaround, just good service and a good part at a better price than new.',
-    name: 'Truck Owner',
-    area: 'Asheville Area',
-  },
-]
-
 const faqs = [
   {
     question: 'Do your parts include a warranty?',
@@ -154,7 +137,10 @@ export default async function HomePage() {
   return (
     <main id="home" className="bg-slate-100">
       <section className="border-b border-slate-200 bg-slate-900/90 text-center text-xs font-bold tracking-wide text-orange-200">
-        <p className="mx-auto max-w-7xl px-4 py-2">Mention this website for $10 off your first order.</p>
+        <p className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-2">
+          <Car className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          Mention this website for $10 off your first order.
+        </p>
       </section>
 
       <section className="relative isolate overflow-hidden">
@@ -207,6 +193,8 @@ export default async function HomePage() {
               Request a Part
             </Link>
           </div>
+
+          <HeroSearch />
         </div>
       </section>
 
@@ -378,6 +366,8 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <JunkCarsCta />
+
       <section id="request-part" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
@@ -421,18 +411,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="reviews" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h2 className="font-heading text-3xl font-black text-slate-950 sm:text-4xl">What Customers Say</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {testimonials.map((review) => (
-            <article key={review.quote} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-sm leading-relaxed text-slate-700">“{review.quote}”</p>
-              <p className="mt-4 text-sm font-black text-slate-900">{review.name}</p>
-              <p className="text-xs text-slate-500">{review.area}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <Testimonials />
 
       <section id="location" className="border-y border-slate-200 bg-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:px-8">

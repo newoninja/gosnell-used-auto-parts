@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Phone } from 'lucide-react'
 import { BUSINESS } from '@/lib/utils'
 
 const navLinks = [
@@ -70,7 +71,13 @@ export function SiteFooter() {
               <p>Fri: 8:00 AM-4:00 PM</p>
               <p>Sat-Sun: Closed</p>
               <p>Limited parts warranty available.</p>
-              <p className="font-semibold text-orange-300">We buy junk cars.</p>
+              <a
+                href={BUSINESS.phones.mainHref}
+                className="inline-flex items-center gap-1.5 font-semibold text-orange-300 hover:text-orange-200 transition-colors"
+              >
+                <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+                We buy junk cars — call for a quote
+              </a>
             </div>
           </div>
         </div>

@@ -5,16 +5,7 @@ import { motion } from 'framer-motion'
 import { Search, ExternalLink, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { buildInventorySearchUrl } from '@/lib/inventory-search'
-
-const currentYear = new Date().getFullYear()
-const years = Array.from({ length: 35 }, (_, i) => String(currentYear - i))
-
-const makes = [
-  'Acura', 'Audi', 'BMW', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler',
-  'Dodge', 'Ford', 'GMC', 'Honda', 'Hyundai', 'Infiniti', 'Jeep', 'Kia',
-  'Lexus', 'Lincoln', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan',
-  'Pontiac', 'Ram', 'Saturn', 'Subaru', 'Toyota', 'Volkswagen', 'Volvo',
-]
+import { years, makes } from '@/lib/vehicle-data'
 
 const partTypes = [
   'Engine', 'Transmission', 'Door', 'Hood', 'Bumper', 'Fender', 'Mirror',
