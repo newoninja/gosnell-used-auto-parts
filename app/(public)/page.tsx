@@ -270,18 +270,18 @@ export default async function HomePage() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <a href={BUSINESS.phones.mainHref} className="rounded-xl border border-slate-200 bg-slate-50 p-5 transition-colors hover:border-orange-300 hover:bg-orange-50">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Main Line</p>
               <p className="mt-2 text-lg font-black text-slate-950">{BUSINESS.phones.main}</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+            </a>
+            <a href={BUSINESS.phones.secondaryHref} className="rounded-xl border border-slate-200 bg-slate-50 p-5 transition-colors hover:border-orange-300 hover:bg-orange-50">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Secondary</p>
               <p className="mt-2 text-lg font-black text-slate-950">{BUSINESS.phones.secondary}</p>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 sm:col-span-2">
+            </a>
+            <a href="https://maps.google.com/?q=110+Tabor+Road+Extension,+Flat+Rock,+NC+28731" target="_blank" rel="noopener noreferrer" className="rounded-xl border border-slate-200 bg-slate-50 p-5 sm:col-span-2 transition-colors hover:border-orange-300 hover:bg-orange-50">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Address</p>
               <p className="mt-2 text-base font-bold text-slate-900">{BUSINESS.address.full}</p>
-            </div>
+            </a>
           </div>
         </div>
       </section>
