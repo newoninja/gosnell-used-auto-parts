@@ -148,7 +148,12 @@ export function PartDetail({ partId }: { partId: string }) {
             </div>
 
             {/* Location blurb */}
-            <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <a
+              href="https://maps.google.com/?q=110+Tabor+Road+Extension,+Flat+Rock,+NC+28731"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 block rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:border-forest-300 hover:bg-forest-50"
+            >
               <div className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-forest-700" />
                 <div>
@@ -157,7 +162,7 @@ export function PartDetail({ partId }: { partId: string }) {
                   <p className="text-xs text-slate-500 mt-1">Mon-Thu 8-5, Fri 8-4</p>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </section>
